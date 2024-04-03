@@ -26,7 +26,7 @@ blog.use('/*', async (c, next) => {
         datasourceUrl: c.env.DATABASE_URL,
       }).$extends(withAccelerate());
     c.set("prisma", prisma)
-    const authheader = c.req.header("authorization") || "";
+    const authheader = c.req.header("Authorization") || "";
     const [ , token] = authheader.split(" ")
     const response = await verify(token, c.env.JWT_SECRET);
     c.set("userId", response.id)
@@ -54,6 +54,7 @@ blog.post('/', async (c) => {
       title: parsedBody.data.title,
       content: parsedBody.data.content,
       authorId: userId
+      // publishedOn: Date.now()
     }
   })
   return c.json({
@@ -96,10 +97,16 @@ blog.put('/', async (c) => {
 // Todo: add pagenation for
 blog.get('/bulk', async (c) => {
   const prisma = c.get("prisma");
-  const userId = c.get("userId");
   const blogs = await prisma.blog.findMany({
-    where: {
-      authorId: userId
+    select: {
+      content: true,
+      title: true,
+      id: true,
+      author: {
+        select: {
+          name: true
+        }
+      }
     }
   })
   return c.json({blogs})
@@ -109,14 +116,22 @@ blog.get('/:id', async (c) => {
   try {
     const prisma = c.get("prisma");
     const {id} = c.req.param();
-    const userId = c.get("userId");
     const blog = await prisma.blog.findUnique({
       where: {
-        id,
-        authorId: userId
+        id
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: {
+          select: {
+            name: true
+          }
+        }
       }
     })
-    return c.json(blog)
+    return c.json({blog})
   } catch (error) {
     c.status(404)
     return c.json(c.error)

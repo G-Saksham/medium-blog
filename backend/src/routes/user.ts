@@ -15,11 +15,12 @@ const user = new Hono<{
   }
 }>()
 
-user.use("*",async (c) => {
+user.use("/*", async (c, next) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
   c.set("prisma", prisma)
+  await next()
 })
 
 user.post('/signup', async (c) => {
@@ -38,9 +39,8 @@ user.post('/signup', async (c) => {
     })
 
     const token = await sign({id: user.id}, c.env.JWT_SECRET)
-    c.set('userId', user.id)
     return c.json({
-      jwt: token
+      auth: `Bearer ${token}`
     })
   } catch (error) {
     c.status(403)
@@ -72,7 +72,9 @@ user.post('/signin', async (c) => {
   }
 
   const token = await sign({ id: user.id }, c.env.JWT_SECRET);
-  return c.json({ token })
+  return c.json({
+    auth: `Bearer ${token}`,
+  })
 })
 
 export default user;
