@@ -9,7 +9,7 @@ export const Blog = () => {
     const {loading, blog} = useBlog({id: id || ""});
     
     //add skeleton
-    if(loading) {
+    if(loading || !blog) {
         return <div>
             <Skeleton/>
         </div>
