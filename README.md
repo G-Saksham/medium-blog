@@ -2,8 +2,10 @@
 
 ### Overview
 
-This project is a simplified version of the Medium blogging platform, featuring user authentication, blog post management, and more. 
-Check it Out: [Website Link](https://medium-blog-hs4o0m948-saksham-guptas-projects-afafc67e.vercel.app/signup)
+This project is a simplified version of the Medium blogging platform, featuring user authentication, blog post management, and more.
+<br>
+<br>
+Check it Out: [live link](https://medium-blog-hs4o0m948-saksham-guptas-projects-afafc67e.vercel.app/signup)
 
 ### Features
 - **User Authentication:** Sign up and sign in functionalities for users.
